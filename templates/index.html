@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="hero-title">Aether Agribot</h1>
+                <p class="hero-subtitle">Smart Agriculture Solutions</p>
+                <p class="hero-tagline">Revolutionizing farming with AI & robotics</p>
+                <a href="#services" class="btn btn-success btn-lg">
+                    Explore Solutions
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="section-spacing">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 mb-3">Smart Solutions</h2>
+                <p class="text-minimal">AI-powered tools for modern agriculture</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Weed Detection -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: #38a169; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-leaf text-white fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="service-title">Weed Detection</h4>
+                    <p class="service-description mb-4">Computer vision to identify and classify weeds vs crops with high accuracy.</p>
+                    <a href="{{ url_for('weed_detection') }}" class="btn btn-outline-success">
+                        Try Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Disease Detection -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: #ed8936; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-bug text-white fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="service-title">Disease Detection</h4>
+                    <p class="service-description mb-4">AI diagnostics for early detection of rice diseases and treatment recommendations.</p>
+                    <a href="{{ url_for('disease_detection') }}" class="btn btn-outline-success">
+                        Try Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- GPS Simulation -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: #3182ce; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-satellite text-white fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="service-title">GPS Navigation</h4>
+                    <p class="service-description mb-4">Precision path planning and field mapping for autonomous robot navigation.</p>
+                    <a href="{{ url_for('gps_simulation') }}" class="btn btn-outline-success">
+                        Try Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Obstacle Avoidance -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: #e53e3e; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-route text-white fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="service-title">Obstacle Avoidance</h4>
+                    <p class="service-description mb-4">Smart navigation with real-time path adjustment and obstacle detection.</p>
+                    <a href="{{ url_for('obstacle_avoidance') }}" class="btn btn-outline-success">
+                        Try Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Soil Monitoring -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: #805ad5; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-thermometer-half text-white fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="service-title">Soil Monitoring</h4>
+                    <p class="service-description mb-4">Real-time environmental monitoring with intelligent alerts and recommendations.</p>
+                    <a href="{{ url_for('soil_monitoring') }}" class="btn btn-outline-success">
+                        Try Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Future Service Placeholder -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card" style="opacity: 0.6;">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: #a0aec0; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <i class="fas fa-plus text-white fa-lg"></i>
+                        </div>
+                    </div>
+                    <h4 class="service-title">More Coming Soon</h4>
+                    <p class="service-description mb-4">Yield estimation, crop health analytics, and autonomous spraying systems.</p>
+                    <button class="btn btn-outline-secondary" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold text-dark mb-3">Why Choose Aether Agribot?</h2>
+                <p class="lead text-muted">Advanced technology for sustainable farming</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-brain fa-3x text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">AI-Powered</h5>
+                    <p class="text-muted">Advanced machine learning algorithms for precise analysis</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-clock fa-3x text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Real-time</h5>
+                    <p class="text-muted">Instant results and continuous monitoring</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Reliable</h5>
+                    <p class="text-muted">Proven accuracy and robust performance</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-leaf fa-3x text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Sustainable</h5>
+                    <p class="text-muted">Eco-friendly precision agriculture solutions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

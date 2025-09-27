@@ -4,7 +4,7 @@ from PIL import Image
 import os
 import io
 
-from .utils import get_transform, DEVICE, softmax_probs
+from scripts.utils import get_transform, DEVICE, softmax_probs
 
 # Model path and labels
 MODEL_PATH = 'models/weed_detection.pt'

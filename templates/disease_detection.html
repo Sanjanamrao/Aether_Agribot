@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}Disease Detection - Aether Agribot{% endblock %}
+
+{% block content %}
+<section class="py-5 mt-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold text-dark mb-3">
+                    <i class="fas fa-bug text-warning"></i> Disease Detection
+                </h1>
+                <p class="lead text-muted">AI-Powered Rice Disease Diagnostics</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Camera Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-camera"></i> Live Disease Detection</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <p class="text-muted">Point your camera at a rice leaf for real-time disease detection</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="diseaseCaptureBtn" class="btn btn-warning btn-lg px-5 me-2">
+                                <i class="fas fa-camera"></i> Capture & Diagnose
+                            </button>
+                            <button id="diseaseReleaseBtn" class="btn btn-outline-secondary" style="display: none;">
+                                <i class="fas fa-stop"></i> Release Camera
+                            </button>
+                        </div>
+                        
+                        <!-- Camera Preview -->
+                        <div id="diseaseCameraPreview" class="mt-4 text-center" style="display: none;">
+                            <img id="diseaseCapturedImg" class="img-fluid rounded" style="max-height: 300px;">
+                            <p class="mt-2 text-muted">🍃 Live Leaf Capture</p>
+                        </div>
+                        
+                        <!-- Upload Option -->
+                        <div class="mt-4">
+                            <hr>
+                            <h6 class="text-center mb-3">Or Upload Leaf Image</h6>
+                            <form id="diseaseDetectionForm" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <input class="form-control" type="file" id="leafFile" accept=".jpg,.jpeg,.png">
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-outline-warning">
+                                        <i class="fas fa-upload"></i> Upload & Analyze
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-stethoscope"></i> Disease Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="diseaseLoadingSpinner" style="display: none;">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-warning" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">🔄 Analyzing leaf sample with AI diagnostics...</p>
+                            </div>
+                        </div>
+                        
+                        <div id="diseaseResultsContainer" style="display: none;">
+                            <div class="result-card p-4 rounded mb-3">
+                                <h4 class="text-center mb-4" id="diseaseAnalysisTitle">🔬 Disease Analysis</h4>
+                                <div class="text-center">
+                                    <div id="diseaseLabel" class="display-6 fw-bold mb-2"></div>
+                                    <div id="diseaseConfidence" class="fs-5"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="diseaseRecommendation"></div>
+                            <div id="treatmentTips"></div>
+                        </div>
+                        
+                        <div id="diseaseDefaultContent">
+                            <div class="text-center py-4">
+                                <h5 class="text-warning mb-3">🔬 Disease Diagnostics Ready</h5>
+                                <p class="text-muted mb-4">Upload a leaf image for instant disease analysis!</p>
+                                <div class="row g-3">
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-search fa-2x text-warning mb-2"></i>
+                                        <small class="d-block">10+ Diseases</small>
+                                    </div>
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-bullseye fa-2x text-warning mb-2"></i>
+                                        <small class="d-block">High Accuracy</small>
+                                    </div>
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-pills fa-2x text-warning mb-2"></i>
+                                        <small class="d-block">Treatment Tips</small>
+                                    </div>
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-bolt fa-2x text-warning mb-2"></i>
+                                        <small class="d-block">Instant Results</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Disease Information -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Common Rice Diseases We Detect</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="text-danger">🦠 Bacterial Leaf Blight</h6>
+                                    <p class="small text-muted">Yellow to white lesions along leaf margins</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="text-danger">🍂 Brown Spot Disease</h6>
+                                    <p class="small text-muted">Circular brown spots on leaves and grains</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="text-danger">💥 Rice Blast Disease</h6>
+                                    <p class="small text-muted">Diamond-shaped lesions with gray centers</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="text-warning">🟡 Rice Tungro Disease</h6>
+                                    <p class="small text-muted">Yellow-orange discoloration of leaves</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="text-danger">🌾 Sheath Blight Disease</h6>
+                                    <p class="small text-muted">Oval lesions on leaf sheaths and stems</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="text-success">✅ Healthy Leaves</h6>
+                                    <p class="small text-muted">No visible symptoms or diseases</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('diseaseDetectionForm');
+    const fileInput = document.getElementById('leafFile');
+    const leafPreview = document.getElementById('leafPreview');
+    const leafPreviewImg = document.getElementById('leafPreviewImg');
+    const loadingSpinner = document.getElementById('diseaseLoadingSpinner');
+    const resultsContainer = document.getElementById('diseaseResultsContainer');
+    const defaultContent = document.getElementById('diseaseDefaultContent');
+    const cameraBtn = document.getElementById('diseaseCaptureBtn');
+    const releaseBtn = document.getElementById('diseaseReleaseBtn');
+    const cameraPreview = document.getElementById('diseaseCameraPreview');
+    const capturedImg = document.getElementById('diseaseCapturedImg');
+    
+    // Handle file selection
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                leafPreviewImg.src = e.target.result;
+                leafPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Handle camera capture
+    cameraBtn.addEventListener('click', function() {
+        // Show loading
+        defaultContent.style.display = 'none';
+        resultsContainer.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        
+        fetch('/api/disease-detection/camera', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            
+            if (data.success) {
+                // Show captured image
+                capturedImg.src = `data:image/jpeg;base64,${data.image}`;
+                cameraPreview.style.display = 'block';
+                cameraBtn.style.display = 'none';
+                releaseBtn.style.display = 'inline-block';
+                
+                // Display results
+                const diseaseLabel = document.getElementById('diseaseLabel');
+                const diseaseConfidence = document.getElementById('diseaseConfidence');
+                const diseaseRecommendation = document.getElementById('diseaseRecommendation');
+                const treatmentTips = document.getElementById('treatmentTips');
+                const analysisTitle = document.getElementById('diseaseAnalysisTitle');
+                
+                // Check if healthy
+                const isHealthy = data.label.toLowerCase().includes('healthy') || 
+                                 data.label.toLowerCase().includes('normal');
+                
+                const color = isHealthy ? '#4CAF50' : '#E65100';
+                const icon = isHealthy ? '✅' : '🦠';
+                
+                analysisTitle.textContent = `${icon} Disease Analysis`;
+                diseaseLabel.textContent = data.label;
+                diseaseLabel.style.color = color;
+                diseaseConfidence.innerHTML = `Confidence: <strong>${(data.confidence * 100).toFixed(1)}%</strong>`;
+                
+                // Show recommendations
+                if (isHealthy) {
+                    diseaseRecommendation.innerHTML = `
+                        <div class="alert alert-success">
+                            🎉 <strong>Healthy Leaf Detected!</strong> Your crop appears to be in good condition.
+                        </div>
+                    `;
+                    treatmentTips.innerHTML = `
+                        <div class="alert alert-info">
+                            💡 <strong>Tip:</strong> Continue regular monitoring and maintain good field hygiene.
+                        </div>
+                    `;
+                } else {
+                    diseaseRecommendation.innerHTML = `
+                        <div class="alert alert-danger">
+                            🚨 <strong>Disease Detected:</strong> ${data.label}
+                        </div>
+                    `;
+                    treatmentTips.innerHTML = `
+                        <div class="alert alert-warning">
+                            💊 <strong>Recommendation:</strong> Consult with an agricultural expert for appropriate treatment options.
+                        </div>
+                    `;
+                }
+                
+                resultsContainer.style.display = 'block';
+            } else {
+                alert('Error: ' + data.error);
+                defaultContent.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            defaultContent.style.display = 'block';
+            alert('Error capturing image: ' + error.message);
+        });
+    });
+    
+    // Handle camera release
+    releaseBtn.addEventListener('click', function() {
+        fetch('/api/camera/release', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                cameraPreview.style.display = 'none';
+                cameraBtn.style.display = 'inline-block';
+                releaseBtn.style.display = 'none';
+                resultsContainer.style.display = 'none';
+                defaultContent.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error releasing camera:', error);
+        });
+    });
+    
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a leaf image file');
+            return;
+        }
+        
+        formData.append('file', file);
+        
+        // Show loading state
+        defaultContent.style.display = 'none';
+        resultsContainer.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        
+        fetch('/api/disease-detection', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            
+            if (data.success) {
+                // Display results
+                const diseaseLabel = document.getElementById('diseaseLabel');
+                const diseaseConfidence = document.getElementById('diseaseConfidence');
+                const diseaseRecommendation = document.getElementById('diseaseRecommendation');
+                const treatmentTips = document.getElementById('treatmentTips');
+                const analysisTitle = document.getElementById('diseaseAnalysisTitle');
+                
+                // Check if healthy
+                const isHealthy = data.label.toLowerCase().includes('healthy') || 
+                                 data.label.toLowerCase().includes('normal');
+                
+                const color = isHealthy ? '#4CAF50' : '#E65100';
+                const icon = isHealthy ? '✅' : '🦠';
+                
+                analysisTitle.textContent = `${icon} Disease Analysis`;
+                diseaseLabel.textContent = data.label;
+                diseaseLabel.style.color = color;
+                diseaseConfidence.innerHTML = `Confidence: <strong>${(data.confidence * 100).toFixed(1)}%</strong>`;
+                
+                // Show recommendations
+                if (isHealthy) {
+                    diseaseRecommendation.innerHTML = `
+                        <div class="alert alert-success">
+                            🎉 <strong>Healthy Leaf Detected!</strong> Your crop appears to be in good condition.
+                        </div>
+                    `;
+                    treatmentTips.innerHTML = `
+                        <div class="alert alert-info">
+                            💡 <strong>Tip:</strong> Continue regular monitoring and maintain good field hygiene.
+                        </div>
+                    `;
+                } else {
+                    diseaseRecommendation.innerHTML = `
+                        <div class="alert alert-danger">
+                            🚨 <strong>Disease Detected:</strong> ${data.label}
+                        </div>
+                    `;
+                    treatmentTips.innerHTML = `
+                        <div class="alert alert-warning">
+                            💊 <strong>Recommendation:</strong> Consult with an agricultural expert for appropriate treatment options.
+                        </div>
+                    `;
+                }
+                
+                resultsContainer.style.display = 'block';
+            } else {
+                alert('Error: ' + data.error);
+                defaultContent.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            defaultContent.style.display = 'block';
+            alert('Error analyzing leaf: ' + error.message);
+        });
+    });
+});
+</script>
+{% endblock %}

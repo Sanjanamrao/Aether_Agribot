@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}Soil Monitoring - Aether Agribot{% endblock %}
+
+{% block content %}
+<section class="py-5 mt-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold text-dark mb-3">
+                    <i class="fas fa-thermometer-half text-primary"></i> Soil Monitoring
+                </h1>
+                <p class="lead text-muted">Real-time Environmental & System Health Monitoring</p>
+            </div>
+        </div>
+        
+        <!-- Live Sensor Readings -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-line"></i> Live Sensor Readings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="soilLoadingSpinner">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">📊 Loading sensor data...</p>
+                            </div>
+                        </div>
+                        
+                        <div id="soilDataContainer" style="display: none;">
+                            <div class="row g-4 mb-4">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="metric-card text-center p-4" id="moistureCard">
+                                        <i class="fas fa-tint fa-3x mb-3" style="color: #4CAF50;"></i>
+                                        <div class="display-5 fw-bold mb-2" id="moistureValue">0.0%</div>
+                                        <h6 class="text-dark fw-bold mb-1">Soil Moisture</h6>
+                                        <small class="text-muted" id="moistureStatus">Loading...</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="metric-card text-center p-4" id="temperatureCard">
+                                        <i class="fas fa-thermometer-half fa-3x mb-3" style="color: #FF9800;"></i>
+                                        <div class="display-5 fw-bold mb-2" id="temperatureValue">0.0°C</div>
+                                        <h6 class="text-dark fw-bold mb-1">Temperature</h6>
+                                        <small class="text-muted" id="temperatureStatus">Loading...</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="metric-card text-center p-4" id="batteryCard">
+                                        <i class="fas fa-battery-three-quarters fa-3x mb-3" style="color: #2196F3;"></i>
+                                        <div class="display-5 fw-bold mb-2" id="batteryValue">0.0%</div>
+                                        <h6 class="text-dark fw-bold mb-1">Battery Level</h6>
+                                        <small class="text-muted" id="batteryStatus">Loading...</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Historical Data Chart -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-area"></i> Historical Data Trends</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted text-center mb-4">Track sensor readings over time to identify patterns and optimize field conditions</p>
+                        <div style="height: 400px;">
+                            <canvas id="sensorChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Insights and Features -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Field Status & Recommendations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="recommendationsList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-warning" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Analyzing field conditions...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-cogs"></i> Monitoring Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6 text-center">
+                                <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+                                <div class="fw-bold">Real-time Data</div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <i class="fas fa-tint fa-2x text-info mb-2"></i>
+                                <div class="fw-bold">Auto Irrigation</div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <i class="fas fa-cloud-sun fa-2x text-info mb-2"></i>
+                                <div class="fw-bold">Weather Sync</div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x text-info mb-2"></i>
+                                <div class="fw-bold">Smart Alerts</div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <i class="fas fa-chart-bar fa-2x text-info mb-2"></i>
+                                <div class="fw-bold">Trend Analysis</div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <i class="fas fa-mobile-alt fa-2x text-info mb-2"></i>
+                                <div class="fw-bold">Mobile Alerts</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button class="btn btn-info" onclick="loadSoilData()">
+                                <i class="fas fa-sync-alt"></i> Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let sensorChart = null;
+
+function loadSoilData() {
+    const loadingSpinner = document.getElementById('soilLoadingSpinner');
+    const dataContainer = document.getElementById('soilDataContainer');
+    
+    loadingSpinner.style.display = 'block';
+    dataContainer.style.display = 'none';
+    
+    fetch('/api/soil-monitoring')
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            
+            if (data.success) {
+                // Update live readings
+                updateSensorReadings(data);
+                
+                // Update chart
+                updateSensorChart(data.chart_data);
+                
+                // Update recommendations
+                updateRecommendations(data.recommendations);
+                
+                dataContainer.style.display = 'block';
+            } else {
+                showError(data.error);
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            showError('Failed to load sensor data: ' + error.message);
+        });
+}
+
+function updateSensorReadings(data) {
+    // Moisture
+    const moistureValue = document.getElementById('moistureValue');
+    const moistureStatus = document.getElementById('moistureStatus');
+    const moistureCard = document.getElementById('moistureCard');
+    
+    moistureValue.textContent = `${data.moisture_latest.toFixed(1)}%`;
+    
+    let moistureColor, moistureStatusText, moistureBorder;
+    if (data.moisture_latest >= 40) {
+        moistureColor = '#4CAF50';
+        moistureStatusText = 'Optimal';
+        moistureBorder = '4px solid #4CAF50';
+    } else if (data.moisture_latest >= 20) {
+        moistureColor = '#FF9800';
+        moistureStatusText = 'Moderate';
+        moistureBorder = '4px solid #FF9800';
+    } else {
+        moistureColor = '#F44336';
+        moistureStatusText = 'Low';
+        moistureBorder = '4px solid #F44336';
+    }
+    
+    moistureValue.style.color = moistureColor;
+    moistureStatus.textContent = moistureStatusText;
+    moistureCard.style.borderLeft = moistureBorder;
+    
+    // Temperature
+    const temperatureValue = document.getElementById('temperatureValue');
+    const temperatureStatus = document.getElementById('temperatureStatus');
+    const temperatureCard = document.getElementById('temperatureCard');
+    
+    temperatureValue.textContent = `${data.temp_latest.toFixed(1)}°C`;
+    
+    let tempColor, tempStatusText, tempBorder;
+    if (data.temp_latest >= 20 && data.temp_latest <= 30) {
+        tempColor = '#4CAF50';
+        tempStatusText = 'Ideal Range';
+        tempBorder = '4px solid #4CAF50';
+    } else {
+        tempColor = '#FF9800';
+        tempStatusText = 'Monitor';
+        tempBorder = '4px solid #FF9800';
+    }
+    
+    temperatureValue.style.color = tempColor;
+    temperatureStatus.textContent = tempStatusText;
+    temperatureCard.style.borderLeft = tempBorder;
+    
+    // Battery
+    const batteryValue = document.getElementById('batteryValue');
+    const batteryStatus = document.getElementById('batteryStatus');
+    const batteryCard = document.getElementById('batteryCard');
+    
+    batteryValue.textContent = `${data.battery_latest.toFixed(1)}%`;
+    
+    let batteryColor, batteryStatusText, batteryBorder;
+    if (data.battery_latest >= 50) {
+        batteryColor = '#4CAF50';
+        batteryStatusText = 'Good';
+        batteryBorder = '4px solid #4CAF50';
+    } else if (data.battery_latest >= 20) {
+        batteryColor = '#FF9800';
+        batteryStatusText = 'Low';
+        batteryBorder = '4px solid #FF9800';
+    } else {
+        batteryColor = '#F44336';
+        batteryStatusText = 'Critical';
+        batteryBorder = '4px solid #F44336';
+    }
+    
+    batteryValue.style.color = batteryColor;
+    batteryStatus.textContent = batteryStatusText;
+    batteryCard.style.borderLeft = batteryBorder;
+}
+
+function updateSensorChart(chartData) {
+    const ctx = document.getElementById('sensorChart').getContext('2d');
+    
+    if (sensorChart) {
+        sensorChart.destroy();
+    }
+    
+    sensorChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.time,
+            datasets: [
+                {
+                    label: 'Soil Moisture (%)',
+                    data: chartData.soil_moisture,
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Temperature (°C)',
+                    data: chartData.temperature,
+                    borderColor: '#FF9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Battery (%)',
+                    data: chartData.battery,
+                    borderColor: '#2196F3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+}
+
+function updateRecommendations(recommendations) {
+    const recommendationsList = document.getElementById('recommendationsList');
+    
+    if (recommendations.length > 0) {
+        recommendationsList.innerHTML = recommendations.map(rec => 
+            `<div class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> ${rec}</div>`
+        ).join('');
+    } else {
+        recommendationsList.innerHTML = `
+            <div class="text-center py-3">
+                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                <p class="mb-0">All systems operating normally</p>
+            </div>
+        `;
+    }
+}
+
+function showError(message) {
+    const container = document.querySelector('.container');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-danger alert-dismissible fade show';
+    errorDiv.innerHTML = `
+        <strong>Error!</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    container.insertBefore(errorDiv, container.firstChild);
+}
+
+// Load data when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadSoilData();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadSoilData, 30000);
+});
+</script>
+{% endblock %}

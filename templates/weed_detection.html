@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Weed Detection - Aether Agribot{% endblock %}
+
+{% block content %}
+<section class="py-5 mt-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold text-dark mb-3">
+                    <i class="fas fa-leaf text-success"></i> AI Weed Detection
+                </h1>
+                <p class="lead text-muted">Advanced Computer Vision for Crop Analysis</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Camera Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-camera"></i> Live Camera Detection</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <p class="text-muted">Point your camera at the field for real-time weed detection</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button id="captureBtn" class="btn btn-success btn-lg px-5 me-2">
+                                <i class="fas fa-camera"></i> Capture & Analyze
+                            </button>
+                            <button id="releaseBtn" class="btn btn-outline-secondary" style="display: none;">
+                                <i class="fas fa-stop"></i> Release Camera
+                            </button>
+                        </div>
+                        
+                        <!-- Camera Preview -->
+                        <div id="cameraPreview" class="mt-4 text-center" style="display: none;">
+                            <img id="capturedImg" class="img-fluid rounded" style="max-height: 300px;">
+                            <p class="mt-2 text-muted">📷 Live Camera Capture</p>
+                        </div>
+                        
+                        <!-- Upload Option -->
+                        <div class="mt-4">
+                            <hr>
+                            <h6 class="text-center mb-3">Or Upload Image</h6>
+                            <form id="weedDetectionForm" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <input class="form-control" type="file" id="imageFile" accept=".jpg,.jpeg,.png">
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-outline-success">
+                                        <i class="fas fa-upload"></i> Upload & Analyze
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-line"></i> Detection Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="loadingSpinner" style="display: none;">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">🔄 Analyzing image with AI...</p>
+                            </div>
+                        </div>
+                        
+                        <div id="resultsContainer" style="display: none;">
+                            <div class="result-card p-4 rounded mb-3">
+                                <h4 class="text-center mb-4">🎯 AI Prediction</h4>
+                                <div class="text-center">
+                                    <div id="predictionLabel" class="display-6 fw-bold mb-2"></div>
+                                    <div id="confidenceScore" class="fs-5"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="recommendationAlert"></div>
+                        </div>
+                        
+                        <div id="defaultContent">
+                            <div class="text-center py-4">
+                                <h5 class="text-success mb-3">🔬 Ready for Analysis</h5>
+                                <p class="text-muted mb-4">Upload an image to see our AI weed detection in action!</p>
+                                <div class="row g-3">
+                                    <div class="col-4 text-center">
+                                        <i class="fas fa-file-image fa-2x text-success mb-2"></i>
+                                        <small class="d-block">JPG, JPEG, PNG</small>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <i class="fas fa-bullseye fa-2x text-success mb-2"></i>
+                                        <small class="d-block">High Accuracy</small>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <i class="fas fa-bolt fa-2x text-success mb-2"></i>
+                                        <small class="d-block">Instant Results</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Information Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">How It Works</h5>
+                        <div class="row">
+                            <div class="col-md-3 text-center mb-3">
+                                <i class="fas fa-upload fa-3x text-primary mb-2"></i>
+                                <h6>1. Upload Image</h6>
+                                <p class="small text-muted">Select a clear field image</p>
+                            </div>
+                            <div class="col-md-3 text-center mb-3">
+                                <i class="fas fa-robot fa-3x text-primary mb-2"></i>
+                                <h6>2. AI Analysis</h6>
+                                <p class="small text-muted">Our AI analyzes the image</p>
+                            </div>
+                            <div class="col-md-3 text-center mb-3">
+                                <i class="fas fa-chart-bar fa-3x text-primary mb-2"></i>
+                                <h6>3. Get Results</h6>
+                                <p class="small text-muted">Receive classification results</p>
+                            </div>
+                            <div class="col-md-3 text-center mb-3">
+                                <i class="fas fa-lightbulb fa-3x text-primary mb-2"></i>
+                                <h6>4. Take Action</h6>
+                                <p class="small text-muted">Follow recommendations</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('weedDetectionForm');
+    const fileInput = document.getElementById('imageFile');
+    const captureBtn = document.getElementById('captureBtn');
+    const releaseBtn = document.getElementById('releaseBtn');
+    const cameraPreview = document.getElementById('cameraPreview');
+    const capturedImg = document.getElementById('capturedImg');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const defaultContent = document.getElementById('defaultContent');
+    
+    // Camera variables
+    let stream = null;
+    let video = null;
+    let canvas = null;
+    
+    // Initialize camera elements
+    function initializeCameraElements() {
+        if (!video) {
+            video = document.createElement('video');
+            video.width = 640;
+            video.height = 480;
+            video.autoplay = true;
+            video.style.width = '100%';
+            video.style.maxWidth = '640px';
+            video.style.border = '2px solid #ddd';
+            video.style.borderRadius = '8px';
+            video.style.display = 'block';
+            video.style.margin = '10px auto';
+        }
+        
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.style.display = 'none';
+        }
+    }
+    
+    // Camera capture functionality
+    captureBtn.addEventListener('click', async function() {
+        try {
+            initializeCameraElements();
+            
+            if (!stream) {
+                // Start camera
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                
+                // Add video to preview area
+                cameraPreview.innerHTML = '<p class="mt-2 text-muted">📷 Camera Active - Position your device to capture weeds</p>';
+                cameraPreview.appendChild(video);
+                cameraPreview.style.display = 'block';
+                
+                captureBtn.innerHTML = '<i class="fas fa-capture"></i> Take Photo';
+                releaseBtn.style.display = 'inline-block';
+                
+            } else {
+                // Capture photo
+                captureBtn.disabled = true;
+                captureBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                
+                // Set canvas size to match video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Draw video frame to canvas
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0);
+                
+                // Convert to blob and send to server
+                canvas.toBlob(async function(blob) {
+                    const formData = new FormData();
+                    formData.append('image', blob, 'capture.jpg');
+                    
+                    // Show loading state
+                    defaultContent.style.display = 'none';
+                    resultsContainer.style.display = 'none';
+                    loadingSpinner.style.display = 'block';
+                    
+                    try {
+                        const response = await fetch('/api/weed-detection/camera', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        loadingSpinner.style.display = 'none';
+                        captureBtn.disabled = false;
+                        captureBtn.innerHTML = '<i class="fas fa-camera"></i> Capture & Analyze';
+                        
+                        if (data.success) {
+                            // Show captured image instead of video
+                            capturedImg.src = `data:image/jpeg;base64,${data.image}`;
+                            cameraPreview.innerHTML = '<p class="mt-2 text-muted">📷 Captured Image Analysis</p>';
+                            cameraPreview.appendChild(capturedImg);
+                            cameraPreview.style.display = 'block';
+                            
+                            // Display results
+                            displayResults(data.label, data.confidence);
+                        } else {
+                            alert('Analysis Error: ' + data.error);
+                            defaultContent.style.display = 'block';
+                        }
+                    } catch (error) {
+                        loadingSpinner.style.display = 'none';
+                        captureBtn.disabled = false;
+                        captureBtn.innerHTML = '<i class="fas fa-camera"></i> Capture & Analyze';
+                        alert('Error analyzing image: ' + error.message);
+                        defaultContent.style.display = 'block';
+                    }
+                }, 'image/jpeg');
+            }
+        } catch (error) {
+            alert('Camera Error: ' + error.message);
+            console.error('Camera error:', error);
+            defaultContent.style.display = 'block';
+            alert('Error capturing image: ' + error.message);
+        });
+    });
+    
+    // Release camera
+    releaseBtn.addEventListener('click', function() {
+        // Stop browser camera stream
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        
+        // Reset UI
+        releaseBtn.style.display = 'none';
+        cameraPreview.style.display = 'none';
+        captureBtn.innerHTML = '<i class="fas fa-camera"></i> Capture & Analyze';
+        resultsContainer.style.display = 'none';
+        defaultContent.style.display = 'block';
+        });
+    });
+    
+    // Handle file upload
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Please select an image file');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Show loading state
+        defaultContent.style.display = 'none';
+        resultsContainer.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        
+        fetch('/api/weed-detection', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            
+            if (data.success) {
+                displayResults(data.label, data.confidence);
+            } else {
+                alert('Error: ' + data.error);
+                defaultContent.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            defaultContent.style.display = 'block';
+            alert('Error analyzing image: ' + error.message);
+        });
+    });
+    
+    // Function to display results
+    function displayResults(label, confidence) {
+        const predictionLabel = document.getElementById('predictionLabel');
+        const confidenceScore = document.getElementById('confidenceScore');
+        const recommendationAlert = document.getElementById('recommendationAlert');
+        
+        predictionLabel.textContent = label.toUpperCase();
+        confidenceScore.innerHTML = `Confidence: <strong>${(confidence * 100).toFixed(1)}%</strong>`;
+        
+        // Set colors based on prediction
+        const isWeed = label.toLowerCase() === 'weed';
+        const color = isWeed ? '#FF9800' : '#4CAF50';
+        predictionLabel.style.color = color;
+        
+        // Show recommendation
+        if (isWeed) {
+            recommendationAlert.innerHTML = `
+                <div class="alert alert-warning">
+                    ⚠️ <strong>Weeds Detected!</strong> Consider implementing weed control measures.
+                </div>
+            `;
+        } else {
+            recommendationAlert.innerHTML = `
+                <div class="alert alert-success">
+                    ✅ <strong>Healthy Crops Detected!</strong> Your field looks good.
+                </div>
+            `;
+        }
+        
+        resultsContainer.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}
