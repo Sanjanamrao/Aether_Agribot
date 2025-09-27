@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}GPS Simulation - Aether Agribot{% endblock %}
+
+{% block content %}
+<section class="py-5 mt-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold text-dark mb-3">
+                    <i class="fas fa-satellite text-info"></i> GPS Navigation
+                </h1>
+                <p class="lead text-muted">Precision Path Planning & Field Mapping</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Configuration Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-map-marked-alt"></i> Field Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="gpsSimulationForm">
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">📍 Starting Position</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="startLat" class="form-label">🌍 Start Latitude</label>
+                                        <input type="number" class="form-control" id="startLat" 
+                                               value="12.9716" step="0.000001" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="startLon" class="form-label">🌍 Start Longitude</label>
+                                        <input type="number" class="form-control" id="startLon" 
+                                               value="77.5946" step="0.000001" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">📐 Field Dimensions</h6>
+                                <div class="mb-3">
+                                    <label for="rows" class="form-label">📏 Number of Rows: <span id="rowsValue">8</span></label>
+                                    <input type="range" class="form-range" id="rows" min="1" max="30" value="8">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cols" class="form-label">📏 Number of Columns: <span id="colsValue">15</span></label>
+                                    <input type="range" class="form-range" id="cols" min="1" max="40" value="15">
+                                </div>
+                            </div>
+                            
+                            <!-- Field Summary -->
+                            <div class="alert alert-light border">
+                                <h6 class="fw-bold mb-2">📊 Field Summary</h6>
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="fw-bold text-success" id="gridSize">8 × 15</div>
+                                        <small class="text-muted">Grid Coverage</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="fw-bold text-success" id="gpsPoints">~120</div>
+                                        <small class="text-muted">GPS Points</small>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <strong>Pattern:</strong> Optimized Zig-zag Movement
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-info btn-lg px-5">
+                                    <i class="fas fa-rocket"></i> Generate GPS Path
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-route"></i> Path Generation Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="gpsLoadingSpinner" style="display: none;">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-info" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">🛰️ Calculating optimal path...</p>
+                            </div>
+                        </div>
+                        
+                        <div id="gpsResultsContainer" style="display: none;">
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <div class="metric-card">
+                                        <div class="display-6 fw-bold text-success mb-1" id="pointsGenerated">0</div>
+                                        <small class="text-muted">GPS Points Generated</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card">
+                                        <div class="h4 fw-bold text-success mb-1">Zig-zag</div>
+                                        <small class="text-muted">Coverage Pattern</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> GPS path successfully generated!
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <strong>📄 Map file saved:</strong> <code id="mapFileName"></code>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-center mb-3">📋 Next Steps</h6>
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item border-0 px-0">
+                                            📂 Open the generated HTML file in your browser
+                                        </div>
+                                        <div class="list-group-item border-0 px-0">
+                                            🗺️ Review the planned path on the interactive map
+                                        </div>
+                                        <div class="list-group-item border-0 px-0">
+                                            📤 Upload the GPS coordinates to your robot
+                                        </div>
+                                        <div class="list-group-item border-0 px-0">
+                                            🤖 Begin autonomous field coverage
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="gpsDefaultContent">
+                            <div class="text-center py-4">
+                                <h5 class="text-info mb-3">🗺️ Path Planning Ready</h5>
+                                <p class="text-muted mb-4">Configure your field parameters and generate the optimal navigation path!</p>
+                                <div class="row g-3">
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-satellite fa-2x text-info mb-2"></i>
+                                        <small class="d-block">Precision GPS</small>
+                                    </div>
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-bolt fa-2x text-info mb-2"></i>
+                                        <small class="d-block">Optimized Patterns</small>
+                                    </div>
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-chart-bar fa-2x text-info mb-2"></i>
+                                        <small class="d-block">Custom Dimensions</small>
+                                    </div>
+                                    <div class="col-3 text-center">
+                                        <i class="fas fa-map fa-2x text-info mb-2"></i>
+                                        <small class="d-block">Interactive Maps</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('gpsSimulationForm');
+    const rowsSlider = document.getElementById('rows');
+    const colsSlider = document.getElementById('cols');
+    const rowsValue = document.getElementById('rowsValue');
+    const colsValue = document.getElementById('colsValue');
+    const gridSize = document.getElementById('gridSize');
+    const gpsPoints = document.getElementById('gpsPoints');
+    const loadingSpinner = document.getElementById('gpsLoadingSpinner');
+    const resultsContainer = document.getElementById('gpsResultsContainer');
+    const defaultContent = document.getElementById('gpsDefaultContent');
+    
+    // Update slider values and calculations
+    function updateValues() {
+        const rows = parseInt(rowsSlider.value);
+        const cols = parseInt(colsSlider.value);
+        
+        rowsValue.textContent = rows;
+        colsValue.textContent = cols;
+        gridSize.textContent = `${rows} × ${cols}`;
+        gpsPoints.textContent = `~${rows * cols}`;
+    }
+    
+    rowsSlider.addEventListener('input', updateValues);
+    colsSlider.addEventListener('input', updateValues);
+    
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const data = {
+            start_lat: parseFloat(document.getElementById('startLat').value),
+            start_lon: parseFloat(document.getElementById('startLon').value),
+            rows: parseInt(rowsSlider.value),
+            cols: parseInt(colsSlider.value)
+        };
+        
+        // Show loading state
+        defaultContent.style.display = 'none';
+        resultsContainer.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        
+        fetch('/api/gps-simulation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            loadingSpinner.style.display = 'none';
+            
+            if (result.success) {
+                // Update results
+                document.getElementById('pointsGenerated').textContent = result.points_count;
+                document.getElementById('mapFileName').textContent = result.html_file;
+                
+                resultsContainer.style.display = 'block';
+            } else {
+                alert('Error: ' + result.error);
+                defaultContent.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            defaultContent.style.display = 'block';
+            alert('Error generating GPS path: ' + error.message);
+        });
+    });
+    
+    // Initialize values
+    updateValues();
+});
+</script>
+{% endblock %}
