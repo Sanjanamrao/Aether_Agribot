@@ -235,3 +235,4 @@ For questions or issues with the Flask version:
 The migration from Streamlit to Flask represents a major upgrade in terms of performance, user experience, and development flexibility. The new Flask application provides a professional, scalable solution for the Aether Agribot smart farming platform.
 
 **Ready to experience the future of smart farming? Run `python app.py` and explore the new dashboard!** 🚀
+# Performance optimized repository
